@@ -1,5 +1,6 @@
 #include "msp430g2553.h"
-//#include "math.h"
+//#include "math.h" no es necesario
+
 
 #define TXLED BIT0
 #define RXLED BIT6
