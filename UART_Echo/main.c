@@ -1,4 +1,5 @@
 #include "msp430g2553.h"
+#include "i2c.h"
 //#include "math.h" no es necesario
 
 
@@ -6,6 +7,8 @@
 #define RXLED BIT6
 #define TXD BIT2
 #define RXD BIT1
+#define SDA BIT7
+#define SCL BIT6
 
 const char string[] = { "  Hola mundo\r\n" };
 
@@ -30,19 +33,22 @@ int main(void)
    /*Configuracion de puertos*/
    P2DIR |= 0xFF; // All P2.x outputs
    P2OUT &= 0x00; // All P2.x reset
-   P1SEL |= RXD + TXD ; // P1.1 = RXD, P1.2=TXD
-   P1SEL2 |= RXD + TXD ; // P1.1 = RXD, P1.2=TXD
+   P1SEL |= RXD + TXD + SDA + SCL; // P1.1 = RXD, P1.2=TXD, P1.6=SCL, P1.7=SDA
+   P1SEL2 |= RXD + TXD + SDA + SCL; // P1.1 = RXD, P1.2=TXD, P1.6=SCL, P1.7=SDA
    P1DIR |= RXLED + TXLED;
    P1OUT &= 0x00;
 
-
+   /*Configuracion de UART*/
    UCA0CTL1 |= UCSSEL_2; // SMCLK
    UCA0BR0 = 104; // 1MHz 9600
    UCA0BR1 = 0x00; // 1MHz 9600
    UCA0MCTL = UCBRS2 + UCBRS0; // Modulation UCBRSx = 5
    UCA0CTL1 &= ~UCSWRST; // **Initialize USCI state machine**
+
    UC0IE |= UCA0RXIE; // Enable USCI_A0 RX interrupt
    __bis_SR_register(CPUOFF + GIE); // Enter LPM0 w/ int until Byte RXed
+
+
 
    while (1)
    {
@@ -74,6 +80,7 @@ __interrupt void USCI0RX_ISR(void)
        i = 0;
       UC0IE |= UCA0TXIE; // Enable USCI_A0 TX interrupt
       //UCA0TXBUF = string[i++];
+
       UCA0TXBUF = txData[i++];
     }
     UCA0TXBUF = UCA0RXBUF;

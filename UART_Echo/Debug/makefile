@@ -8,6 +8,7 @@ CG_TOOL_ROOT := c:/ti/ccsv6/tools/compiler/msp430_4.3.3
 
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
+"./i2c.obj" \
 "./main.obj" \
 "../lnk_msp430g2553.cmd" \
 -l"libc.a" \
@@ -140,8 +141,8 @@ UART_Echo.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "main.pp" 
-	-$(RM) "main.obj" 
+	-$(RM) "i2c.pp" "main.pp" 
+	-$(RM) "i2c.obj" "main.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
